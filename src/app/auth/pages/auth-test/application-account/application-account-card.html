@@ -1,42 +1,53 @@
-<section
-  class="h-full rounded-2xl border border-slate-800 bg-slate-900 p-6"
-  aria-labelledby="account-title"
->
-  <h2 id="account-title" class="text-lg font-semibold">2. Cuenta de la aplicación</h2>
-  <p class="mt-4 text-sm leading-relaxed text-slate-400">
-    Sincroniza tu identidad y luego consulta la cuenta. Consultar antes de sincronizar permite
-    comprobar el caso de cuenta inexistente.
-  </p>
-  <div class="mt-5 flex flex-wrap gap-3">
-    <button
-      type="button"
-      (click)="syncRequested.emit()"
-      [disabled]="!!pending() || sessionState() !== 'signed-in'"
-      class="rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
-    >
-      {{ pending() === 'sync' ? 'Sincronizando…' : 'Sincronizar cuenta' }}
-    </button>
-    <button
-      type="button"
-      (click)="currentRequested.emit()"
-      [disabled]="!!pending() || sessionState() !== 'signed-in'"
-      class="rounded-lg border border-slate-600 px-4 py-2.5 text-sm font-medium hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
-    >
-      {{ pending() === 'me' ? 'Consultando…' : 'Consultar mi cuenta' }}
-    </button>
+<section class="group" aria-labelledby="account-title">
+  <div class="flex items-center justify-between pb-2 border-b border-slate-800/60 mb-4">
+    <h2 id="account-title" class="text-sm font-medium text-slate-300 uppercase tracking-wide">
+      2. Cuenta API
+    </h2>
   </div>
-  @if (account(); as account) {
-    <dl class="mt-6 space-y-3 border-t border-slate-800 pt-5 text-sm">
-      <div>
-        <dt class="text-slate-400">Identificador de cuenta</dt>
-        <dd class="mt-1 break-all font-mono text-xs text-emerald-300">
-          {{ account.account_id }}
-        </dd>
-      </div>
-      <div>
-        <dt class="text-slate-400">Creada</dt>
-        <dd class="mt-1 break-all font-mono text-xs">{{ account.created_at }}</dd>
-      </div>
-    </dl>
-  }
+
+  <div class="flex flex-col gap-3">
+    <div class="flex flex-wrap gap-2">
+      <button
+        type="button"
+        (click)="syncRequested.emit()"
+        [disabled]="!!pending() || sessionState() !== 'signed-in'"
+        class="flex-1 min-w-[140px] inline-flex justify-center items-center rounded-md bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-emerald-500/20"
+      >
+        {{ pending() === 'sync' ? 'Sincronizando...' : 'Sincronizar' }}
+      </button>
+      <button
+        type="button"
+        (click)="currentRequested.emit()"
+        [disabled]="!!pending() || sessionState() !== 'signed-in'"
+        class="flex-1 min-w-[140px] inline-flex justify-center items-center rounded-md bg-slate-800/80 hover:bg-slate-700 px-4 py-2.5 text-sm font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ pending() === 'me' ? 'Consultando...' : 'Consultar' }}
+      </button>
+    </div>
+
+    @if (account(); as account) {
+    <div class="mt-2 rounded-lg bg-slate-800/30 p-4 border border-slate-700/50 backdrop-blur-sm">
+      <dl class="space-y-3">
+        <div>
+          <dt class="text-[10px] font-semibold tracking-wider text-slate-500 uppercase">
+            ID de Cuenta
+          </dt>
+          <dd class="mt-0.5 font-mono text-xs text-emerald-400 break-all">
+            {{ account.account_id }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-[10px] font-semibold tracking-wider text-slate-500 uppercase">
+            Creada en
+          </dt>
+          <dd class="mt-0.5 font-mono text-xs text-slate-300">{{ account.created_at }}</dd>
+        </div>
+      </dl>
+    </div>
+    } @else {
+    <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+      Debes sincronizar tu identidad para crear o actualizar la cuenta en nuestra base de datos.
+    </p>
+    }
+  </div>
 </section>
