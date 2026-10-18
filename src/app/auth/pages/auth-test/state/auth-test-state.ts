@@ -57,9 +57,15 @@ export class AuthTestState {
     this.notice.set('');
     try {
       await this.session.loginWithGoogle();
+      // Automatizamos la sincronización tras un login exitoso
+      // Esperamos al próximo tick para que Angular procese los efectos de sesión
+      // y no cancele nuestra nueva petición HTTP de sincronización.
+      setTimeout(() => {
+        if (this.pending() === 'login') this.pending.set(null);
+        this.sync();
+      }, 0);
     } catch (error) {
       this.notice.set(describeAuthError(error).message);
-    } finally {
       if (this.pending() === 'login') this.pending.set(null);
     }
   }
