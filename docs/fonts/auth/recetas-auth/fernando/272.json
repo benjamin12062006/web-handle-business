@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 20 Autenticación y autorización/272. AuthService - Controlar autenticación.md",
+  "previous": [
+    "Sección 20 Autenticación y autorización/271. Formulario reactivo de autenticación.md"
+  ],
+  "objective": "Crear el estado de autenticación del servicio, todavía sin implementar login.",
+  "initial": "Existe el formulario email/password de 271. El servicio se crea en auth/services/auth.service.ts. El tipo User se da por existente en auth.interfaces; la transcripción no proporciona su declaración completa.",
+  "certainty": "Reconstrucción ensamblada desde la explicación, no una copia del repositorio del instructor. Se conserva el estado de esta lección, incluidos sus pasos aún incompletos. No hay ZIP inicial ni definición completa del User heredado: su import requiere el adjunto; no se inventa esa interfaz. Los imports relativos y envolturas de componentes/configuración son una composición mínima inferida, identificada como tal, no el árbol original completo. Los mecanismos documentados sí tienen evidencia por símbolo.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 25,
+      "phrase": "AuthService",
+      "change": "Servicio y _authStatus checking.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 27,
+      "phrase": "AuthStatus",
+      "change": "Unión de los tres estados.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 29,
+      "phrase": "private _user",
+      "change": "Usuario y token anulables.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 31,
+      "phrase": "computed",
+      "change": "Inyección HttpClient y vista de solo lectura.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 33,
+      "phrase": "return not-authenticated",
+      "change": "Prioridad checking y estado derivado del usuario.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 35,
+      "phrase": "this._user",
+      "change": "Getter computado del usuario.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E7",
+      "line": 37,
+      "phrase": "this._token",
+      "change": "Getter computado del token.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    }
+  ],
+  "phases": [
+    {
+      "title": "Definir los tres estados y el almacenamiento privado",
+      "code": "type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';\n// Dentro de AuthService:\nprivate _authStatus = signal<AuthStatus>('checking');\nprivate _user = signal<User | null>(null);\nprivate _token = signal<string | null>(null);\n",
+      "why": "Al recargar aún no sabemos si hay una identidad válida. null representa ausencia de usuario/token, checking representa una comprobación pendiente.",
+      "check": "Inspeccionar el estado inicial: checking y dos null; esto no es un login exitoso.",
+      "evidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Exponer lecturas sin permitir escrituras externas",
+      "code": "authStatus = computed<AuthStatus>(() => {\n  if (this._authStatus() === 'checking') return 'checking';\n  return this._user() ? 'authenticated' : 'not-authenticated';\n});\nuser = computed(() => this._user());\ntoken = computed(() => this._token());\n",
+      "why": "Los consumidores leen señales y el servicio conserva sus set privados. La rama checking tiene prioridad.",
+      "check": "Comprobar mentalmente que un usuario nulo no cambia checking hasta que el servicio modifique _authStatus.",
+      "evidence": [
+        "E4",
+        "E5",
+        "E6",
+        "E7"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Preparar el cliente HTTP",
+      "code": "private http = inject(HttpClient);\n",
+      "why": "Las peticiones se añadirán en la siguiente lección; inyectar el cliente no dispara ninguna.",
+      "check": "El servicio necesita un proveedor HttpClient en la aplicación heredada. No se evalúa la configuración del ZIP ausente.",
+      "evidence": [
+        "E4"
+      ],
+      "language": "typescript"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/app/auth/services/auth.service.ts",
+      "language": "typescript",
+      "code": "import { computed, inject, Injectable, signal } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { User } from '../interfaces/auth.interfaces';\n\nexport type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';\n\n@Injectable({ providedIn: 'root' })\nexport class AuthService {\n  private http = inject(HttpClient);\n  private _authStatus = signal<AuthStatus>('checking');\n  private _user = signal<User | null>(null);\n  private _token = signal<string | null>(null);\n\n  authStatus = computed<AuthStatus>(() => {\n    if (this._authStatus() === 'checking') return 'checking';\n    return this._user() ? 'authenticated' : 'not-authenticated';\n  });\n  user = computed(() => this._user());\n  token = computed(() => this._token());\n}\n",
+      "provenance": "E1–E7. Servicio recuperado completo en su núcleo; User y su ruta son dependencia externa no recuperada. providedIn y orden de imports son ensamblaje convencional."
+    }
+  ],
+  "temporary": "No añadir login ni restauración todavía. El discurso presenta JWT y endpoints de un backend de ejemplo; no es una implementación de Firebase.",
+  "mental": "Estado privado → señales computadas de lectura → consumidor. checking no equivale a no autenticado; la próxima lección establece el resultado de una petición."
+}

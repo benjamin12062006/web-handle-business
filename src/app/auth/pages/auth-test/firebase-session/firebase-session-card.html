@@ -1,0 +1,35 @@
+<section
+  class="h-full rounded-2xl border border-slate-800 bg-slate-900 p-6"
+  aria-labelledby="session-title"
+>
+  <div class="flex items-center justify-between gap-3">
+    <h2 id="session-title" class="text-lg font-semibold">1. Sesión de Firebase</h2>
+    <span class="rounded-full border border-slate-700 px-3 py-1 text-xs text-emerald-300">{{
+      sessionLabel()
+    }}</span>
+  </div>
+  @if (user(); as user) {
+    <p class="mt-5 font-medium">{{ user.displayName || 'Cuenta de Google' }}</p>
+    <p class="mt-1 break-all text-sm text-slate-400">{{ user.email }}</p>
+    <button
+      type="button"
+      (click)="logoutRequested.emit()"
+      [disabled]="pending() === 'logout'"
+      class="mt-6 rounded-lg border border-slate-600 px-4 py-2.5 text-sm font-medium hover:bg-slate-800 disabled:cursor-wait disabled:opacity-50"
+    >
+      Cerrar sesión
+    </button>
+  } @else {
+    <p class="mt-5 text-sm leading-relaxed text-slate-400">
+      Usa una cuenta de Google del proyecto Firebase configurado para esta API.
+    </p>
+    <button
+      type="button"
+      (click)="loginRequested.emit()"
+      [disabled]="!!pending() || state() !== 'signed-out'"
+      class="mt-6 rounded-lg bg-emerald-400 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      {{ pending() === 'login' ? 'Abriendo Google…' : 'Continuar con Google' }}
+    </button>
+  }
+</section>

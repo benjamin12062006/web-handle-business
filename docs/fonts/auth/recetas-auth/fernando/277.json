@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 20 Autenticación y autorización/277. Mostrar usuario autenticado y cerrar sesión.md",
+  "previous": [
+    "Sección 20 Autenticación y autorización/276. Refactorización y principio DRY.md"
+  ],
+  "objective": "Mostrar el nombre de usuario, el acceso al login o la espera, y conectar logout en el navbar.",
+  "initial": "Servicio 276 con user, authStatus y logout; navbar existente de TesloShop. Su resto de enlaces/marca procede de un adjunto no disponible.",
+  "certainty": "Reconstrucción ensamblada desde la explicación, no una copia del repositorio del instructor. Se conserva el estado de esta lección, incluidos sus pasos aún incompletos. No hay ZIP inicial ni definición completa del User heredado: su import requiere el adjunto; no se inventa esa interfaz. Los imports relativos y envolturas de componentes/configuración son una composición mínima inferida, identificada como tal, no el árbol original completo. Los mecanismos documentados sí tienen evidencia por símbolo. El bloque navbar-end recupera la parte enseñada. La envoltura de componente y su selector son una composición mínima inferida. No se presenta como copia completa del navbar previo: faltan marca, menú y estilos heredados ajenos al cambio.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 13,
+      "phrase": "inject",
+      "change": "Inyectar AuthService en navbar.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 15,
+      "phrase": "navbar-end",
+      "change": "Contenedor y rama authenticated.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 17,
+      "phrase": "fullName",
+      "change": "Nombre nullable y botón de salida.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 19,
+      "phrase": "routerLink",
+      "change": "Rama not-authenticated con enlace.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 21,
+      "phrase": "verificación",
+      "change": "Rama checking con puntos.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 27,
+      "phrase": "logout",
+      "change": "Evento click llama al servicio.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    }
+  ],
+  "phases": [
+    {
+      "title": "Exponer el servicio a la plantilla",
+      "code": "authService = inject(AuthService);\n",
+      "why": "La plantilla lee las mismas señales que modifica el servicio; no se copia el usuario a otra variable local.",
+      "check": "El componente necesita el import de AuthService; RouterLink debe estar en imports para el enlace.",
+      "evidence": [
+        "E1",
+        "E4"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Representar los tres estados y cerrar sesión",
+      "code": "<div class=\"navbar-end gap-4\">\n  @if (authService.authStatus() === 'authenticated') {\n    <button class=\"btn btn-ghost\">{{ authService.user()?.fullName }}</button>\n    <button class=\"btn btn-sm btn-error\" (click)=\"authService.logout()\">Salir</button>\n  } @else if (authService.authStatus() === 'not-authenticated') {\n    <a routerLink=\"/auth/login\" class=\"btn btn-secondary\">Iniciar sesión</a>\n  } @else {\n    <button class=\"btn btn-ghost\">...</button>\n  }\n</div>\n",
+      "why": "La espera impide mostrar un login falso durante la comprobación. El nombre solo existe en la rama autenticada.",
+      "check": "Cambiar de sesión en el ejemplo actualiza nombre/acceso. Salir llama logout y cambia a la rama del enlace.",
+      "evidence": [
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "language": "html"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/app/store-front/components/front-navbar/front-navbar.component.ts",
+      "language": "typescript",
+      "code": "import { Component, inject } from '@angular/core';\nimport { RouterLink } from '@angular/router';\nimport { AuthService } from '../../../auth/services/auth.service';\n\n@Component({\n  selector: 'app-front-navbar',\n  imports: [RouterLink],\n  templateUrl: './front-navbar.component.html',\n})\nexport class FrontNavbarComponent {\n  authService = inject(AuthService);\n}\n",
+      "provenance": "E1; RouterLink de E4. Envoltura mínima inferida, no reemplazo fiel de todos los imports anteriores."
+    },
+    {
+      "path": "src/app/store-front/components/front-navbar/front-navbar.component.html",
+      "language": "html",
+      "code": "<div class=\"navbar-end gap-4\">\n  @if (authService.authStatus() === 'authenticated') {\n    <button class=\"btn btn-ghost\">{{ authService.user()?.fullName }}</button>\n    <button class=\"btn btn-sm btn-error\" (click)=\"authService.logout()\">Salir</button>\n  } @else if (authService.authStatus() === 'not-authenticated') {\n    <a routerLink=\"/auth/login\" class=\"btn btn-secondary\">Iniciar sesión</a>\n  } @else {\n    <button class=\"btn btn-ghost\">...</button>\n  }\n</div>\n",
+      "provenance": "E2–E6: bloque navbar-end completo dentro del alcance; resto del navbar del adjunto ausente no se fabrica."
+    }
+  ],
+  "temporary": "No agregar guards ni registro. El instructor permite permanecer sin sesión en la tienda. El menú y marca anteriores no se deducen de esta lección y no se reconstruyen como si se conocieran.",
+  "mental": "Una fuente de estado: servicio → tres ramas de plantilla → evento logout → mismo servicio."
+}

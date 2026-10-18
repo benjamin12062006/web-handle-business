@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/241. Introducción al Cliente HTTP de Angular (HttpClient).md",
+  "previous": [
+    "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/238. Proyecto Inicial Frontend y Backend en Angular.md"
+  ],
+  "objective": "Proveer HttpClient en el arranque standalone e inyectarlo en el componente.",
+  "initial": "Proyecto Selector de lugares del ZIP 238; aplicaciones frontend y backend se instalan y arrancan por separado. Todavía no se programa una petición en esta clase.",
+  "certainty": "Reconstrucción ensamblada, con nombres españoles normalizados desde el dictado. El ZIP inicial de 238 no está en la biblioteca: modelos, componentes de presentación, CSS y main previos no se recuperan íntegros. Se muestra completo el núcleo HTTP y las envolturas mínimas necesarias para leerlo; no se afirma que equivalgan a la aplicación completa del instructor ni que compilen sin sus dependencias heredadas. No se inventa la definición de Lugar ni el componente app-lugares.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 15,
+      "phrase": "HttpClient",
+      "change": "Servicio a inyectar.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 17,
+      "phrase": "Angular Common http",
+      "change": "Imports de inject y HttpClient.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 19,
+      "phrase": "null injector",
+      "change": "Fallo si no se provee.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 23,
+      "phrase": "Bootstrap application",
+      "change": "Configurar a nivel de aplicación standalone.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 25,
+      "phrase": "Provider http client",
+      "change": "Invocar provideHttpClient.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 29,
+      "phrase": "constructor",
+      "change": "Alternativa por constructor.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E7",
+      "line": 13,
+      "phrase": "proyecto inicial",
+      "change": "ZIP de partida ausente.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada.",
+      "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/238. Proyecto Inicial Frontend y Backend en Angular.md"
+    }
+  ],
+  "phases": [
+    {
+      "title": "Solicitar la dependencia",
+      "code": "private httpClient = inject(HttpClient);\n",
+      "why": "El componente pide el cliente; Angular necesita conocer su proveedor antes de construirlo.",
+      "check": "Sin provider el curso observa un error de inyección. Declarar la propiedad no envía datos al backend.",
+      "evidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Configurar el proveedor global",
+      "code": "import { bootstrapApplication } from '@angular/platform-browser';\nimport { provideHttpClient } from '@angular/common/http';\nimport { AppComponent } from './app/app.component';\n\nbootstrapApplication(AppComponent, {\n  providers: [provideHttpClient()],\n});\n",
+      "why": "La dependencia se usará desde varios componentes/servicios y se registra al arrancar standalone.",
+      "check": "En el curso desaparece el error de inyección; la clase termina antes de implementar GET.",
+      "evidence": [
+        "E4",
+        "E5"
+      ],
+      "language": "typescript"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/main.ts",
+      "language": "typescript",
+      "code": "import { bootstrapApplication } from '@angular/platform-browser';\nimport { provideHttpClient } from '@angular/common/http';\nimport { AppComponent } from './app/app.component';\n\nbootstrapApplication(AppComponent, {\n  providers: [provideHttpClient()],\n});\n",
+      "provenance": "E4–E5: composición mínima de bootstrap. AppComponent/import y resto de configuración del ZIP son inferencia declarada."
+    },
+    {
+      "path": "src/app/lugares/lugares-disponibles/lugares-disponibles.component.ts",
+      "language": "typescript",
+      "code": "import { Component, inject } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\n\n@Component({\n  selector: 'app-lugares-disponibles',\n  templateUrl: './lugares-disponibles.component.html',\n})\nexport class LugaresDisponiblesComponent {\n  private httpClient = inject(HttpClient);\n}\n",
+      "provenance": "E1–E2. Clase/envoltura mínima normalizada; no incluye señales, imports ni template previos que no muestra esta lección."
+    }
+  ],
+  "temporary": "El constructor se muestra como alternativa y se comenta; la opción final es inject. No añadir un GET de la lección posterior 243. No sustituir por módulos una aplicación que el instructor configura como standalone.",
+  "mental": "Proveer en bootstrap → inyectar en consumidor. Configurar el cliente y ejecutar una petición son pasos distintos."
+}

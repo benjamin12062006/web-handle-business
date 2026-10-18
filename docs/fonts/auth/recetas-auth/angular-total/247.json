@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/247. Manejo de Errores HTTP en Angular.md",
+  "previous": [
+    "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/238. Proyecto Inicial Frontend y Backend en Angular.md",
+    "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/241. Introducción al Cliente HTTP de Angular (HttpClient).md",
+    "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/243. Enviar Solicitudes GET en Angular.md",
+    "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/245. Transformar y Usar Datos de Respuesta en Angular.md",
+    "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/246. Mostrar un Texto de Respaldo (Fallback) durante la Carga en Angular.md"
+  ],
+  "objective": "Mostrar error HTTP legible y separar la transformación del error de su presentación.",
+  "initial": "Se heredan provisión 241, petición/DestroyRef 243, map y señal lugares de 245 y señal estaRecibiendo/complete de 246. El proyecto Express permite simular un 500.",
+  "certainty": "Reconstrucción ensamblada, con nombres españoles normalizados desde el dictado. El ZIP inicial de 238 no está en la biblioteca: modelos, componentes de presentación, CSS y main previos no se recuperan íntegros. Se muestra completo el núcleo HTTP y las envolturas mínimas necesarias para leerlo; no se afirma que equivalgan a la aplicación completa del instructor ni que compilen sin sus dependencias heredadas. No se inventa la definición de Lugar ni el componente app-lugares. El binding de app-lugares y la envoltura se expresan como una composición mínima inferida del bloque descrito; faltan sus entradas completas, selector de contenedor, CSS y modelo del ZIP. No se cambia la conducta heredada: error no llama complete ni pone estaRecibiendo en false; la condición de plantilla oculta la carga cuando existe un mensaje.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 15,
+      "phrase": "500",
+      "change": "Error temporal del backend.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 21,
+      "phrase": "string vacío",
+      "change": "Señal error inicial.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 23,
+      "phrase": "tercera",
+      "change": "Callback error del observer.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 27,
+      "phrase": "ampersand doble",
+      "change": "Carga solo si no hay error.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 29,
+      "phrase": "otro if",
+      "change": "Mostrar mensaje en plantilla.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 35,
+      "phrase": "console",
+      "change": "Mensaje técnico y mensaje legible.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E7",
+      "line": 41,
+      "phrase": "throw error",
+      "change": "catchError devuelve un Observable de error.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E8",
+      "line": 47,
+      "phrase": "return",
+      "change": "Log original y return throwError.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E9",
+      "line": 49,
+      "phrase": "clase error",
+      "change": "Error tipado en callback.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E10",
+      "line": 53,
+      "phrase": "comentar",
+      "change": "Desactivar 500 al terminar.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E11",
+      "line": 19,
+      "phrase": "map",
+      "change": "Transformar body a array.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada.",
+      "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/245. Transformar y Usar Datos de Respuesta en Angular.md"
+    },
+    {
+      "id": "E12",
+      "line": 15,
+      "phrase": "está recibiendo",
+      "change": "Señal loading.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada.",
+      "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/246. Mostrar un Texto de Respaldo (Fallback) durante la Carga en Angular.md"
+    },
+    {
+      "id": "E13",
+      "line": 21,
+      "phrase": "complete",
+      "change": "Limpiar loading al completar.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada.",
+      "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/246. Mostrar un Texto de Respaldo (Fallback) durante la Carga en Angular.md"
+    },
+    {
+      "id": "E14",
+      "line": 29,
+      "phrase": "destroy ref",
+      "change": "Cleanup heredado.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada.",
+      "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/243. Enviar Solicitudes GET en Angular.md"
+    }
+  ],
+  "phases": [
+    {
+      "title": "Representar el fallo sin dejar una pantalla muda",
+      "code": "error = signal('');\n// En subscribe, agregar:\n// error: (error: Error) => this.error.set(error.message)\n",
+      "why": "El error es otra salida terminal del Observable. Mostrar un mensaje permite distinguir un fallo de una carga lenta.",
+      "check": "Al provocar 500 la señal deja de estar vacía y contiene el mensaje. No esperar que complete se ejecute después de error.",
+      "evidence": [
+        "E1",
+        "E2",
+        "E3",
+        "E9"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Transformar el error en el pipe",
+      "code": "catchError((error) => {\n  console.log(error.message);\n  return throwError(() => new Error('Algo salió mal al obtener los lugares disponibles. Por favor, intenta nuevamente más tarde.'));\n})\n",
+      "why": "Se conserva el diagnóstico original en consola y la UI recibe el error con mensaje legible. throwError debe retornarse.",
+      "check": "El callback error recibe el nuevo Error y muestra su message; no convertir accidentalmente el resultado en un Observable anidado.",
+      "evidence": [
+        "E6",
+        "E7",
+        "E8",
+        "E9"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Mostrar carga, fallo y datos en condiciones separadas",
+      "code": "@if (estaRecibiendo() && !error()) {\n  <p class=\"texto-respaldo\">Cargando lugares disponibles...</p>\n}\n@if (error()) {\n  <p class=\"texto-respaldo\">{{ error() }}</p>\n}\n@if (lugares()) {\n  <app-lugares [lugares]=\"lugares()!\" />\n}\n",
+      "why": "error oculta la carga mediante && !error(); los datos continúan usando la señal lugares heredada.",
+      "check": "Con 500 se muestra mensaje; sin 500 y tras reiniciar el backend aparecen lugares. Comprobar que la simulación queda comentada.",
+      "evidence": [
+        "E4",
+        "E5",
+        "E10",
+        "E11",
+        "E12",
+        "E13"
+      ],
+      "language": "html"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/app/lugares/lugares-disponibles/lugares-disponibles.component.ts",
+      "language": "typescript",
+      "code": "import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { catchError, map, throwError } from 'rxjs';\nimport { Lugar } from '../lugar.model';\nimport { LugaresComponent } from '../lugares.component';\n\n@Component({\n  selector: 'app-lugares-disponibles',\n  imports: [LugaresComponent],\n  templateUrl: './lugares-disponibles.component.html',\n})\nexport class LugaresDisponiblesComponent implements OnInit {\n  private httpClient = inject(HttpClient);\n  private destroyRef = inject(DestroyRef);\n  lugares = signal<Lugar[] | undefined>(undefined);\n  estaRecibiendo = signal(false);\n  error = signal('');\n\n  ngOnInit() {\n    this.estaRecibiendo.set(true);\n    const suscripcion = this.httpClient\n      .get<{ lugares: Lugar[] }>('http://localhost:3000/lugares')\n      .pipe(\n        map((datosRespuesta) => datosRespuesta.lugares),\n        catchError((error) => {\n          console.log(error.message);\n          return throwError(\n            () =>\n              new Error(\n                'Algo salió mal al obtener los lugares disponibles. Por favor, intenta nuevamente más tarde.',\n              ),\n          );\n        }),\n      )\n      .subscribe({\n        next: (lugares) => this.lugares.set(lugares),\n        complete: () => this.estaRecibiendo.set(false),\n        error: (error: Error) => this.error.set(error.message),\n      });\n    this.destroyRef.onDestroy(() => suscripcion.unsubscribe());\n  }\n}\n",
+      "provenance": "E2–E3, E6–E9 y contexto E11–E14. Import de LugaresComponent y ubicación exacta inferidos del ZIP faltante; no se define por invención."
+    },
+    {
+      "path": "src/app/lugares/lugares-disponibles/lugares-disponibles.component.html",
+      "language": "html",
+      "code": "@if (estaRecibiendo() && !error()) {\n  <p class=\"texto-respaldo\">Cargando lugares disponibles...</p>\n}\n@if (error()) {\n  <p class=\"texto-respaldo\">{{ error() }}</p>\n}\n@if (lugares()) {\n  <app-lugares [lugares]=\"lugares()!\" />\n}\n",
+      "provenance": "E4–E5 y 246 líneas 21–25: núcleo condicional completo; contenedor y presentación heredados faltantes, binding lugares inferido."
+    }
+  ],
+  "temporary": "Simulación del backend: res.status(500).json(...) solo temporal. No se proporciona un cuerpo inventado ni se reconstruye todo app.js; el final restaura su ruta original al comentar el retorno de error y reinicia con npm start. El método carga no usa finalize: añadirlo aquí sería modernizar el curso; la adaptación propia sí podrá adoptarlo. Tampoco se cambia el cleanup por takeUntilDestroyed.",
+  "mental": "GET → map datos → catchError transforma fallo → observer actualiza señales → plantilla decide carga/error/datos. El diagnóstico de HTTP no debe confundirse con estado de identidad."
+}

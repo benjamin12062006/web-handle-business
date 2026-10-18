@@ -1,0 +1,197 @@
+{
+  "date": "2026-10-17",
+  "verification": "helper verify exitoso; lectura del Markdown y revisión semántica por el agente; sin compilación ni ejecución de los cursos",
+  "courses": [
+    {
+      "course_root": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto",
+      "originals": {
+        "Sección 20 Autenticación y autorización/272. AuthService - Controlar autenticación.md": "eb0e732a62ab4497572f4746067dbd5e23ba4490e367f1555218ba30da8887a0",
+        "Sección 20 Autenticación y autorización/271. Formulario reactivo de autenticación.md": "f09d462aa68e70e8159d65a9851ff4d29e8bc354fc63f6014800ae1fc8e306cb",
+        "Sección 20 Autenticación y autorización/273. AuthService - Parte 2.md": "5f9146e93b96cb805f066657b2e54b63e6b59b27947fcfa11b1ee295f01b70a1",
+        "Sección 18 TesloShop Aplicación administrativa/247. Variables de entorno y parametrización.md": "e99d2daf2f7bb7e95b16e17cb8bddc894db9c14f42a6c1c6d4085c3780e8732a",
+        "Sección 20 Autenticación y autorización/274. Manejo de excepciones.md": "d9c18a157a23679871da2b1203edeeafad26d5c0521769d42aa5e38df44160aa",
+        "Sección 20 Autenticación y autorización/275. Revisar autenticación previa.md": "9e739b500e3b5b757502b077e736c0689101df748f2eb55d1f5bd37293801e0d",
+        "Sección 20 Autenticación y autorización/276. Refactorización y principio DRY.md": "55afb484389168ce3608f5d81f780c1b27301bab679cb8cb35cf4e56ad94602e",
+        "Sección 20 Autenticación y autorización/277. Mostrar usuario autenticado y cerrar sesión.md": "318be5ef72f7ca564ee700e4e3935aa1fa5e9d7a0538be44a51e9a2b41fba617",
+        "Sección 20 Autenticación y autorización/278. Interceptores en Angular.md": "880b5e8b039ae23a278a45aa19e8b0094449ba95f362b18e6f7e052480844f0a",
+        "Sección 20 Autenticación y autorización/279. Auth Interceptor.md": "9b6ca535e93f03fb94e80cebdae36184b5c282911204391b7a127f121743ce8e"
+      },
+      "guides": [
+        {
+          "source": "Sección 20 Autenticación y autorización/272. AuthService - Controlar autenticación.md",
+          "guide": "Sección 20 Autenticación y autorización/272. AuthService - Controlar autenticación - Reconstrucción guiada.md",
+          "sha256": "31fc724cc2bb8731416d594136a654ce3b1f985979336ee757091e55a612df02"
+        },
+        {
+          "source": "Sección 20 Autenticación y autorización/273. AuthService - Parte 2.md",
+          "guide": "Sección 20 Autenticación y autorización/273. AuthService - Parte 2 - Reconstrucción guiada.md",
+          "sha256": "23e748dbc5e68270203818cbc83a205b7153f5d045b591eac268ee6f646b291a"
+        },
+        {
+          "source": "Sección 20 Autenticación y autorización/274. Manejo de excepciones.md",
+          "guide": "Sección 20 Autenticación y autorización/274. Manejo de excepciones - Reconstrucción guiada.md",
+          "sha256": "c154ef2aef1b620248d43f3fbd78553ea65d7f836db35d1bde7731f0e67fbcd4"
+        },
+        {
+          "source": "Sección 20 Autenticación y autorización/275. Revisar autenticación previa.md",
+          "guide": "Sección 20 Autenticación y autorización/275. Revisar autenticación previa - Reconstrucción guiada.md",
+          "sha256": "608f28f4c618d38734b646021b852a16c0fca1b80183c73976bf21dbdeb24711"
+        },
+        {
+          "source": "Sección 20 Autenticación y autorización/276. Refactorización y principio DRY.md",
+          "guide": "Sección 20 Autenticación y autorización/276. Refactorización y principio DRY - Reconstrucción guiada.md",
+          "sha256": "57ada045f2b84bd242423eb6061a3d777f82324c209472c117ce70581d1ba34c"
+        },
+        {
+          "source": "Sección 20 Autenticación y autorización/277. Mostrar usuario autenticado y cerrar sesión.md",
+          "guide": "Sección 20 Autenticación y autorización/277. Mostrar usuario autenticado y cerrar sesión - Reconstrucción guiada.md",
+          "sha256": "3ac86d44ebb9388128c9cb186077c2e7f0357d16a7d8ad3708cfa6d9ddbd09be"
+        },
+        {
+          "source": "Sección 20 Autenticación y autorización/278. Interceptores en Angular.md",
+          "guide": "Sección 20 Autenticación y autorización/278. Interceptores en Angular - Reconstrucción guiada.md",
+          "sha256": "0097a4e1487b6e3f9c07e70ff6832d5b8bf5cf88e7e4bece3370499cc6cafd91"
+        },
+        {
+          "source": "Sección 20 Autenticación y autorización/279. Auth Interceptor.md",
+          "guide": "Sección 20 Autenticación y autorización/279. Auth Interceptor - Reconstrucción guiada.md",
+          "sha256": "bfe48f4ea8edbd80168c39c88dded4b882665d7b7093523d4ed97e2466e3296f"
+        }
+      ],
+      "verified_guides": 8,
+      "verified_originals_including_context": 10
+    },
+    {
+      "course_root": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular Completo",
+      "originals": {
+        "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/241. Introducción al Cliente HTTP de Angular (HttpClient).md": "07d2755800843ca6a7c7c2af822e7224c971cc7159e876fb71f682f68bfbb1f7",
+        "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/238. Proyecto Inicial Frontend y Backend en Angular.md": "62c30de1d3959f335db01c32e7f4c9173559f2c4d4f0371c0994ccc16a7aba1e",
+        "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/243. Enviar Solicitudes GET en Angular.md": "6dd39b46737e39a1042ff050bf601b65f28a7ef3f93ccdee89035bba2fc87104",
+        "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/244. Configurar Solicitudes HTTP en Angular.md": "b9a77a60d3d4835dbbf94dc34bd4a93ac3bfa46e870331dfa892fe81282dff41",
+        "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/245. Transformar y Usar Datos de Respuesta en Angular.md": "aaac15e2c330323a5b07de7f615f38cd99d2525619448f20aac80855f08a6f34",
+        "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/246. Mostrar un Texto de Respaldo (Fallback) durante la Carga en Angular.md": "cf28e9f6a257647defdc39396e463625bdc5329c8dea82391d6c3db120d3090f",
+        "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/247. Manejo de Errores HTTP en Angular.md": "2cf6781b7572d8e98b17a502c2c6bd1f07171a95d3f47a025511ec47f14498fc"
+      },
+      "guides": [
+        {
+          "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/241. Introducción al Cliente HTTP de Angular (HttpClient).md",
+          "guide": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/241. Introducción al Cliente HTTP de Angular (HttpClient) - Reconstrucción guiada.md",
+          "sha256": "3d58952455827e8190dd3c0eef7b519fc11781004ff92fac3c807dbac75e5bc9"
+        },
+        {
+          "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/244. Configurar Solicitudes HTTP en Angular.md",
+          "guide": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/244. Configurar Solicitudes HTTP en Angular - Reconstrucción guiada.md",
+          "sha256": "87235a8b6bfbd7585a97f6cd4ec25c33547b8e6b2d05b1251a9073c960400170"
+        },
+        {
+          "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/247. Manejo de Errores HTTP en Angular.md",
+          "guide": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/247. Manejo de Errores HTTP en Angular - Reconstrucción guiada.md",
+          "sha256": "84b27ca224d3bf4984b08e5a6f2ec65b35079b1c9980fdbe268ae8af194403ea"
+        }
+      ],
+      "verified_guides": 3,
+      "verified_originals_including_context": 7
+    }
+  ],
+  "registry": [
+    {
+      "id": "R1",
+      "f": "F1",
+      "number": 272,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/272. AuthService - Controlar autenticación.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/272. AuthService - Controlar autenticación - Reconstrucción guiada.md",
+      "sha256": "31fc724cc2bb8731416d594136a654ce3b1f985979336ee757091e55a612df02",
+      "recipe": "recetas-auth/fernando/272.json"
+    },
+    {
+      "id": "R2",
+      "f": "F2",
+      "number": 273,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/273. AuthService - Parte 2.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/273. AuthService - Parte 2 - Reconstrucción guiada.md",
+      "sha256": "23e748dbc5e68270203818cbc83a205b7153f5d045b591eac268ee6f646b291a",
+      "recipe": "recetas-auth/fernando/273.json"
+    },
+    {
+      "id": "R3",
+      "f": "F3",
+      "number": 274,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/274. Manejo de excepciones.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/274. Manejo de excepciones - Reconstrucción guiada.md",
+      "sha256": "c154ef2aef1b620248d43f3fbd78553ea65d7f836db35d1bde7731f0e67fbcd4",
+      "recipe": "recetas-auth/fernando/274.json"
+    },
+    {
+      "id": "R4",
+      "f": "F4",
+      "number": 275,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/275. Revisar autenticación previa.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/275. Revisar autenticación previa - Reconstrucción guiada.md",
+      "sha256": "608f28f4c618d38734b646021b852a16c0fca1b80183c73976bf21dbdeb24711",
+      "recipe": "recetas-auth/fernando/275.json"
+    },
+    {
+      "id": "R5",
+      "f": "F5",
+      "number": 276,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/276. Refactorización y principio DRY.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/276. Refactorización y principio DRY - Reconstrucción guiada.md",
+      "sha256": "57ada045f2b84bd242423eb6061a3d777f82324c209472c117ce70581d1ba34c",
+      "recipe": "recetas-auth/fernando/276.json"
+    },
+    {
+      "id": "R6",
+      "f": "F6",
+      "number": 277,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/277. Mostrar usuario autenticado y cerrar sesión.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/277. Mostrar usuario autenticado y cerrar sesión - Reconstrucción guiada.md",
+      "sha256": "3ac86d44ebb9388128c9cb186077c2e7f0357d16a7d8ad3708cfa6d9ddbd09be",
+      "recipe": "recetas-auth/fernando/277.json"
+    },
+    {
+      "id": "R7",
+      "f": "F7",
+      "number": 278,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/278. Interceptores en Angular.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/278. Interceptores en Angular - Reconstrucción guiada.md",
+      "sha256": "0097a4e1487b6e3f9c07e70ff6832d5b8bf5cf88e7e4bece3370499cc6cafd91",
+      "recipe": "recetas-auth/fernando/278.json"
+    },
+    {
+      "id": "R8",
+      "f": "F8",
+      "number": 279,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/279. Auth Interceptor.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular de Cero a Experto/Sección 20 Autenticación y autorización/279. Auth Interceptor - Reconstrucción guiada.md",
+      "sha256": "bfe48f4ea8edbd80168c39c88dded4b882665d7b7093523d4ed97e2466e3296f",
+      "recipe": "recetas-auth/fernando/279.json"
+    },
+    {
+      "id": "R9",
+      "f": "F9",
+      "number": 241,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular Completo/Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/241. Introducción al Cliente HTTP de Angular (HttpClient).md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular Completo/Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/241. Introducción al Cliente HTTP de Angular (HttpClient) - Reconstrucción guiada.md",
+      "sha256": "3d58952455827e8190dd3c0eef7b519fc11781004ff92fac3c807dbac75e5bc9",
+      "recipe": "recetas-auth/angular-total/241.json"
+    },
+    {
+      "id": "R10",
+      "f": "F10",
+      "number": 244,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular Completo/Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/244. Configurar Solicitudes HTTP en Angular.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular Completo/Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/244. Configurar Solicitudes HTTP en Angular - Reconstrucción guiada.md",
+      "sha256": "87235a8b6bfbd7585a97f6cd4ec25c33547b8e6b2d05b1251a9073c960400170",
+      "recipe": "recetas-auth/angular-total/244.json"
+    },
+    {
+      "id": "R11",
+      "f": "F11",
+      "number": 247,
+      "original": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular Completo/Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/247. Manejo de Errores HTTP en Angular.md",
+      "guide": "/Users/benji/Documents/chrome-extencions/trancripciones/Angular/Angular Completo/Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/247. Manejo de Errores HTTP en Angular - Reconstrucción guiada.md",
+      "sha256": "84b27ca224d3bf4984b08e5a6f2ec65b35079b1c9980fdbe268ae8af194403ea",
+      "recipe": "recetas-auth/angular-total/247.json"
+    }
+  ]
+}

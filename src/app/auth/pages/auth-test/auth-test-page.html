@@ -1,0 +1,45 @@
+<main class="min-h-screen bg-slate-950 px-5 py-10 text-slate-100 sm:py-16">
+  <div class="mx-auto max-w-4xl">
+    <header class="mb-10">
+      <p class="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-emerald-400">
+        Navigate Business · Desarrollo
+      </p>
+      <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">Prueba de autenticación</h1>
+      <p class="mt-3 max-w-2xl leading-relaxed text-slate-400">
+        Inicia sesión con Google y comprueba tu cuenta en la API. Puedes ejecutar cada paso por
+        separado.
+      </p>
+    </header>
+
+    <app-auth-configuration-notice
+      [missingFields]="config.missing"
+      [unavailable]="state.session.state() === 'unavailable'"
+    />
+
+    <div class="grid gap-6 md:grid-cols-2">
+      <app-firebase-session-card
+        [state]="state.session.state()"
+        [user]="state.session.user()"
+        [pending]="state.pending()"
+        [configurationMissing]="!!config.missing.length"
+        (loginRequested)="state.login()"
+        (logoutRequested)="state.logout()"
+      />
+      <app-application-account-card
+        [sessionState]="state.session.state()"
+        [account]="state.account()"
+        [pending]="state.pending()"
+        (syncRequested)="state.sync()"
+        (currentRequested)="state.current()"
+      />
+    </div>
+
+    <app-api-diagnostic-panel
+      [apiBaseUrl]="config.apiBaseUrl"
+      [pending]="state.pending()"
+      [notice]="state.notice()"
+      [diagnostic]="state.diagnostic()"
+      (withoutTokenRequested)="state.withoutToken()"
+    />
+  </div>
+</main>

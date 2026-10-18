@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 20 Autenticación y autorización/276. Refactorización y principio DRY.md",
+  "previous": [
+    "Sección 20 Autenticación y autorización/272. AuthService - Controlar autenticación.md",
+    "Sección 20 Autenticación y autorización/273. AuthService - Parte 2.md",
+    "Sección 20 Autenticación y autorización/274. Manejo de excepciones.md",
+    "Sección 20 Autenticación y autorización/275. Revisar autenticación previa.md"
+  ],
+  "objective": "Extraer éxito, error y logout compartidos y dejar login/checkStatus sin duplicación.",
+  "initial": "Estado de 275: login/checkStatus duplican transiciones; falta limpiar checking si no hay token.",
+  "certainty": "Reconstrucción ensamblada desde la explicación, no una copia del repositorio del instructor. Se conserva el estado de esta lección, incluidos sus pasos aún incompletos. No hay ZIP inicial ni definición completa del User heredado: su import requiere el adjunto; no se inventa esa interfaz. Los imports relativos y envolturas de componentes/configuración son una composición mínima inferida, identificada como tal, no el árbol original completo. Los mecanismos documentados sí tienen evidencia por símbolo. Se elige handleAuthSuccess, uno de los nombres que el instructor propone. Se conserva any en el error y se usa _token.set, corrigiendo el lapsus del discurso sobre el getter de solo lectura.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 13,
+      "phrase": "logout",
+      "change": "Centralizar limpieza de señales y persistencia.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 15,
+      "phrase": "of(false)",
+      "change": "Usar logout en la rama sin token.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 17,
+      "phrase": "handleAuthSuccess",
+      "change": "Extraer éxito privado y desestructurar respuesta.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 19,
+      "phrase": "handle",
+      "change": "Error privado, logout y of(false).",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 23,
+      "phrase": "map",
+      "change": "Reutilizar helpers en ambos métodos.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 27,
+      "phrase": "Simplemente el",
+      "change": "El éxito devuelve true plano; evita Observable anidado.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E7",
+      "line": 29,
+      "phrase": "catchError",
+      "change": "map versus Observable de recuperación.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    }
+  ],
+  "phases": [
+    {
+      "title": "Centralizar la limpieza",
+      "code": "logout() {\n  this._authStatus.set('not-authenticated');\n  this._user.set(null);\n  this._token.set(null);\n  localStorage.removeItem('token');\n}\n",
+      "why": "La rama sin token y la rama con error deben dejar el mismo estado. removeItem conserva otras claves del navegador.",
+      "check": "Después de logout: no usuario, no token, estado not-authenticated y clave token eliminada.",
+      "evidence": [
+        "E1",
+        "E2"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Separar éxito y error",
+      "code": "private handleAuthSuccess({ user, token }: AuthResponse) {\n  this._authStatus.set('authenticated');\n  this._user.set(user);\n  this._token.set(token);\n  localStorage.setItem('token', token);\n  return true;\n}\n\nprivate handleAuthError(error: any) {\n  this.logout();\n  return of(false);\n}\n",
+      "why": "Éxito será usado por map: devuelve true. El error será usado por catchError: devuelve of(false).",
+      "check": "No devolver of(true) al usar map; produciría Observable<Observable<boolean>>.",
+      "evidence": [
+        "E3",
+        "E4",
+        "E6",
+        "E7"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Reducir login y checkStatus a su transporte",
+      "code": "login(email: string, password: string) {\n  return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, { email, password }).pipe(\n    map((resp) => this.handleAuthSuccess(resp)),\n    catchError((error) => this.handleAuthError(error)),\n  );\n}\n\ncheckStatus() {\n  const token = localStorage.getItem('token');\n  if (!token) {\n    this.logout();\n    return of(false);\n  }\n  return this.http.get<AuthResponse>(`${baseUrl}/auth/check-status`, {\n    headers: { Authorization: `Bearer ${token}` },\n  }).pipe(\n    map((resp) => this.handleAuthSuccess(resp)),\n    catchError((error) => this.handleAuthError(error)),\n  );\n}\n",
+      "why": "Ambas respuestas usan el mismo contrato. Se aplica el helper idéntico sin copiar las cuatro escrituras.",
+      "check": "La rama sin token llama logout antes de false; ahora checking sí se abandona.",
+      "evidence": [
+        "E2",
+        "E5"
+      ],
+      "language": "typescript"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/app/auth/services/auth.service.ts",
+      "language": "typescript",
+      "code": "import { computed, inject, Injectable, signal } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { User } from '../interfaces/auth.interfaces';\nimport { AuthResponse } from '../interfaces/auth-response.interface';\nimport { environment } from '../../../environments/environment';\nimport { map, catchError, of } from 'rxjs';\n\nconst baseUrl = environment.baseUrl;\n\nimport { rxResource } from '@angular/core/rxjs-interop';\nexport type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';\n\n@Injectable({ providedIn: 'root' })\nexport class AuthService {\n  private http = inject(HttpClient);\n  private _authStatus = signal<AuthStatus>('checking');\n  private _user = signal<User | null>(null);\n  private _token = signal<string | null>(null);\n\n  authStatus = computed<AuthStatus>(() => {\n    if (this._authStatus() === 'checking') return 'checking';\n    return this._user() ? 'authenticated' : 'not-authenticated';\n  });\n  user = computed(() => this._user());\n  token = computed(() => this._token());\n  checkStatusResource = rxResource({ loader: () => this.checkStatus() });\n  login(email: string, password: string) {\n    return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, { email, password }).pipe(\n      map((resp) => this.handleAuthSuccess(resp)),\n      catchError((error) => this.handleAuthError(error)),\n    );\n  }\n\n  checkStatus() {\n    const token = localStorage.getItem('token');\n    if (!token) {\n      this.logout();\n      return of(false);\n    }\n    return this.http\n      .get<AuthResponse>(`${baseUrl}/auth/check-status`, {\n        headers: { Authorization: `Bearer ${token}` },\n      })\n      .pipe(\n        map((resp) => this.handleAuthSuccess(resp)),\n        catchError((error) => this.handleAuthError(error)),\n      );\n  }\n  logout() {\n    this._authStatus.set('not-authenticated');\n    this._user.set(null);\n    this._token.set(null);\n    localStorage.removeItem('token');\n  }\n\n  private handleAuthSuccess({ user, token }: AuthResponse) {\n    this._authStatus.set('authenticated');\n    this._user.set(user);\n    this._token.set(token);\n    localStorage.setItem('token', token);\n    return true;\n  }\n\n  private handleAuthError(error: any) {\n    this.logout();\n    return of(false);\n  }\n}\n",
+      "provenance": "E1–E7; estado/imports/resource de 272–275. El núcleo del servicio queda reconstruido; interfaces/environment externos aún requieren base del curso."
+    }
+  ],
+  "temporary": "El primer intento handleAuthSuccess → of(true) se descarta y el final usa true. tap+map(true) se reemplaza por map(helper). El diseño del curso cierra sesión ante todo error: conservarlo como evidencia, no trasladarlo sin separar errores Firebase/API.",
+  "mental": "El transporte difiere, la transición compartida no. map espera un valor y catchError una fuente Observable."
+}

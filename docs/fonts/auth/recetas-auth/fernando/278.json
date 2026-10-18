@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 20 Autenticación y autorización/278. Interceptores en Angular.md",
+  "previous": [
+    "Sección 20 Autenticación y autorización/276. Refactorización y principio DRY.md",
+    "Sección 20 Autenticación y autorización/277. Mostrar usuario autenticado y cerrar sesión.md"
+  ],
+  "objective": "Registrar un interceptor funcional y observar un GET 401 al retirar el Bearer manual.",
+  "initial": "Servicio refactorizado 276 y UI 277. app.config ya usa provideHttpClient con withFetch según la propia clase; otros providers no aparecen completos.",
+  "certainty": "Reconstrucción ensamblada desde la explicación, no una copia del repositorio del instructor. Se conserva el estado de esta lección, incluidos sus pasos aún incompletos. No hay ZIP inicial ni definición completa del User heredado: su import requiere el adjunto; no se inventa esa interfaz. Los imports relativos y envolturas de componentes/configuración son una composición mínima inferida, identificada como tal, no el árbol original completo. Los mecanismos documentados sí tienen evidencia por símbolo. El último estado mantiene el escenario negativo: sin headers manuales y removeItem comentado para conservar el token durante la demostración. No se cambia ese final por una solución anticipada de 279.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 19,
+      "phrase": "logging.interceptor.ts",
+      "change": "Archivo de función logging.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 21,
+      "phrase": "HttpRequest",
+      "change": "Tipos de entrada y función.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 23,
+      "phrase": "next",
+      "change": "Retorno Observable y continuación.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 25,
+      "phrase": "Response",
+      "change": "Log solo en respuesta final.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 27,
+      "phrase": "withInterceptors",
+      "change": "Registro junto a withFetch.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 29,
+      "phrase": "removeItem",
+      "change": "Comentar limpieza temporalmente.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E7",
+      "line": 31,
+      "phrase": "headers",
+      "change": "Retirar headers y comprobar 401.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    }
+  ],
+  "phases": [
+    {
+      "title": "Crear la función y continuar con next",
+      "code": "import { HttpEvent, HttpEventType, HttpHandlerFn, HttpRequest } from '@angular/common/http';\nimport { Observable, tap } from 'rxjs';\n\nexport function loggingInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {\n  return next(req).pipe(\n    tap((event) => {\n      if (event.type === HttpEventType.Response) {\n        console.log(req.url, event.status);\n      }\n    }),\n  );\n}\n",
+      "why": "La función envuelve la cadena HTTP. tap observa eventos sin reemplazar la respuesta que espera el consumidor.",
+      "check": "Solo las respuestas completas imprimen URL/status; no confundir evento Sent con respuesta exitosa.",
+      "evidence": [
+        "E1",
+        "E2",
+        "E3",
+        "E4"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Registrar la función en el cliente",
+      "code": "provideHttpClient(withFetch(), withInterceptors([loggingInterceptor]))\n",
+      "why": "Una función exportada no participa de la cadena hasta que se registra como provider.",
+      "check": "En el curso se ven logs de check-status y products; comprobar primero que el registro apunta a loggingInterceptor, corrigiendo el lapsus loginInterceptor.",
+      "evidence": [
+        "E5"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Dejar preparado el fallo que resolverá la siguiente clase",
+      "code": "// En checkStatus:\nreturn this.http.get<AuthResponse>(`${baseUrl}/auth/check-status`).pipe(\n  map((resp) => this.handleAuthSuccess(resp)),\n  catchError((error) => this.handleAuthError(error)),\n);\n// En logout, temporalmente:\n// localStorage.removeItem('token');\n",
+      "why": "Se retira la credencial manual para demostrar la responsabilidad que tendrá el authInterceptor.",
+      "check": "El GET debe fallar 401 mientras el token aún existe en storage. Esto es resultado esperado del ejercicio, no auth terminada.",
+      "evidence": [
+        "E6",
+        "E7"
+      ],
+      "language": "typescript"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/app/shared/interceptors/logging.interceptor.ts",
+      "language": "typescript",
+      "code": "import { HttpEvent, HttpEventType, HttpHandlerFn, HttpRequest } from '@angular/common/http';\nimport { Observable, tap } from 'rxjs';\n\nexport function loggingInterceptor(\n  req: HttpRequest<unknown>,\n  next: HttpHandlerFn,\n): Observable<HttpEvent<unknown>> {\n  return next(req).pipe(\n    tap((event) => {\n      if (event.type === HttpEventType.Response) {\n        console.log(req.url, event.status);\n      }\n    }),\n  );\n}\n",
+      "provenance": "E1–E4; HttpHandlerFn corrige HttpHandleFn del dictado."
+    },
+    {
+      "path": "src/app/app.config.ts",
+      "language": "typescript",
+      "code": "import { ApplicationConfig } from '@angular/core';\nimport { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';\nimport { loggingInterceptor } from './shared/interceptors/logging.interceptor';\n\n// Composición HTTP recuperada. Los demás providers previos no se conocen aquí.\nexport const appConfig: ApplicationConfig = {\n  providers: [provideHttpClient(withFetch(), withInterceptors([loggingInterceptor]))],\n};\n",
+      "provenance": "E5. Composición HTTP mínima recuperable; no se inventa la lista completa de providers/rutas del adjunto."
+    },
+    {
+      "path": "src/app/auth/services/auth.service.ts",
+      "language": "typescript",
+      "code": "import { computed, inject, Injectable, signal } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { User } from '../interfaces/auth.interfaces';\nimport { AuthResponse } from '../interfaces/auth-response.interface';\nimport { environment } from '../../../environments/environment';\nimport { map, catchError, of } from 'rxjs';\n\nconst baseUrl = environment.baseUrl;\n\nimport { rxResource } from '@angular/core/rxjs-interop';\nexport type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';\n\n@Injectable({ providedIn: 'root' })\nexport class AuthService {\n  private http = inject(HttpClient);\n  private _authStatus = signal<AuthStatus>('checking');\n  private _user = signal<User | null>(null);\n  private _token = signal<string | null>(null);\n\n  authStatus = computed<AuthStatus>(() => {\n    if (this._authStatus() === 'checking') return 'checking';\n    return this._user() ? 'authenticated' : 'not-authenticated';\n  });\n  user = computed(() => this._user());\n  token = computed(() => this._token());\n  checkStatusResource = rxResource({ loader: () => this.checkStatus() });\n  login(email: string, password: string) {\n    return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, { email, password }).pipe(\n      map((resp) => this.handleAuthSuccess(resp)),\n      catchError((error) => this.handleAuthError(error)),\n    );\n  }\n\n  checkStatus() {\n    const token = localStorage.getItem('token');\n    if (!token) {\n      this.logout();\n      return of(false);\n    }\n    return this.http\n      .get<AuthResponse>(`${baseUrl}/auth/check-status`)\n      .pipe(\n        map((resp) => this.handleAuthSuccess(resp)),\n        catchError((error) => this.handleAuthError(error)),\n      );\n  }\n  logout() {\n    this._authStatus.set('not-authenticated');\n    this._user.set(null);\n    this._token.set(null);\n    // Temporal en 278; 279 no muestra su restauración.\n    // localStorage.removeItem('token');\n  }\n\n  private handleAuthSuccess({ user, token }: AuthResponse) {\n    this._authStatus.set('authenticated');\n    this._user.set(user);\n    this._token.set(token);\n    localStorage.setItem('token', token);\n    return true;\n  }\n\n  private handleAuthError(error: any) {\n    this.logout();\n    return of(false);\n  }\n}\n",
+      "provenance": "E6–E7; resto del servicio 276. Conserva explícitamente la suspensión temporal de removeItem."
+    }
+  ],
+  "temporary": "La retirada del header y la suspensión de removeItem siguen vigentes al cerrar esta clase. Son un experimento temporal dentro del recorrido, pero no se eliminan del estado final individual antes de que el curso lo haga. El logger no es una recomendación de registrar credenciales.",
+  "mental": "HttpClient → loggingInterceptor → next → respuesta. El logger observa; no autentica. La petición 401 demuestra que falta el interceptor de credenciales."
+}

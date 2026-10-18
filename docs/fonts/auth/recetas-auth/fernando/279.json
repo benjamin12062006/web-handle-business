@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 20 Autenticación y autorización/279. Auth Interceptor.md",
+  "previous": [
+    "Sección 20 Autenticación y autorización/276. Refactorización y principio DRY.md",
+    "Sección 20 Autenticación y autorización/278. Interceptores en Angular.md"
+  ],
+  "objective": "Añadir Authorization mediante una request clonada y leer el token persistido al crear el servicio.",
+  "initial": "Final de 278: checkStatus ya no agrega headers y logout conserva temporalmente token en storage. logging está registrado.",
+  "certainty": "Reconstrucción ensamblada desde la explicación, no una copia del repositorio del instructor. Se conserva el estado de esta lección, incluidos sus pasos aún incompletos. No hay ZIP inicial ni definición completa del User heredado: su import requiere el adjunto; no se inventa esa interfaz. Los imports relativos y envolturas de componentes/configuración son una composición mínima inferida, identificada como tal, no el árbol original completo. Los mecanismos documentados sí tienen evidencia por símbolo. Se conserva el alcance amplio del ejemplo: agrega el header incluso si el token es null y no filtra destino. La clase no muestra restaurar removeItem: se conserva comentado del experimento y se declara ese límite. Nuestra adaptación corregirá estas políticas fuera de la guía.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 13,
+      "phrase": "req.clone",
+      "change": "Clonar request inmutable.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 15,
+      "phrase": "auth.interceptor.ts",
+      "change": "Ubicación del interceptor.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 17,
+      "phrase": "AuthService",
+      "change": "Inyectar servicio y leer señal token.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 19,
+      "phrase": "append",
+      "change": "Authorization y Bearer.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 21,
+      "phrase": "localStorage.getItem('token')",
+      "change": "Inicializar señal desde persistencia.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 23,
+      "phrase": "authInterceptor",
+      "change": "Registrar y posibilidad de filtro por URL.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E7",
+      "line": 27,
+      "phrase": "loggingInterceptor",
+      "change": "Comentar logger al final.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    }
+  ],
+  "phases": [
+    {
+      "title": "Inicializar el token antes de la primera petición",
+      "code": "private _token = signal<string | null>(localStorage.getItem('token'));\n",
+      "why": "Si se conserva null inicial, el interceptor no tiene aún la credencial cuando checkStatus intenta usarlo.",
+      "check": "Con clave token existente, token() la ofrece desde el inicio; sin ella, sigue siendo null.",
+      "evidence": [
+        "E5"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Clonar y continuar con la nueva request",
+      "code": "import { inject } from '@angular/core';\nimport { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';\nimport { Observable } from 'rxjs';\nimport { AuthService } from '../services/auth.service';\n\nexport function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {\n  const token = inject(AuthService).token();\n  const newReq = req.clone({\n    headers: req.headers.append('Authorization', `Bearer ${token}`),\n  });\n  return next(newReq);\n}\n",
+      "why": "HttpRequest es inmutable. El clone genera otro objeto con el header y next debe recibir ese objeto nuevo.",
+      "check": "Comparar request enviada: Authorization Bearer y misma URL/body. La guía reproduce append, no lo sustituye por una política nueva.",
+      "evidence": [
+        "E1",
+        "E2",
+        "E3",
+        "E4"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Registrar auth y desactivar el logger de práctica",
+      "code": "provideHttpClient(withFetch(), withInterceptors([\n  // loggingInterceptor,\n  authInterceptor,\n]))\n",
+      "why": "La función nueva debe entrar en la cadena. El logger ya cumplió su propósito de diagnóstico.",
+      "check": "Al recargar con token el GET funciona en la demostración; no imprimir el token en la versión final.",
+      "evidence": [
+        "E6",
+        "E7"
+      ],
+      "language": "typescript"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/app/auth/interceptors/auth.interceptor.ts",
+      "language": "typescript",
+      "code": "import { inject } from '@angular/core';\nimport { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';\nimport { Observable } from 'rxjs';\nimport { AuthService } from '../services/auth.service';\n\nexport function authInterceptor(\n  req: HttpRequest<unknown>,\n  next: HttpHandlerFn,\n): Observable<HttpEvent<unknown>> {\n  const token = inject(AuthService).token();\n  const newReq = req.clone({\n    headers: req.headers.append('Authorization', `Bearer ${token}`),\n  });\n  return next(newReq);\n}\n",
+      "provenance": "E1–E4. Headers.append y Bearer según dictado; firma funcional heredada de 278."
+    },
+    {
+      "path": "src/app/auth/services/auth.service.ts",
+      "language": "typescript",
+      "code": "import { computed, inject, Injectable, signal } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { User } from '../interfaces/auth.interfaces';\nimport { AuthResponse } from '../interfaces/auth-response.interface';\nimport { environment } from '../../../environments/environment';\nimport { map, catchError, of } from 'rxjs';\n\nconst baseUrl = environment.baseUrl;\n\nimport { rxResource } from '@angular/core/rxjs-interop';\nexport type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';\n\n@Injectable({ providedIn: 'root' })\nexport class AuthService {\n  private http = inject(HttpClient);\n  private _authStatus = signal<AuthStatus>('checking');\n  private _user = signal<User | null>(null);\n  private _token = signal<string | null>(localStorage.getItem('token'));\n\n  authStatus = computed<AuthStatus>(() => {\n    if (this._authStatus() === 'checking') return 'checking';\n    return this._user() ? 'authenticated' : 'not-authenticated';\n  });\n  user = computed(() => this._user());\n  token = computed(() => this._token());\n  checkStatusResource = rxResource({ loader: () => this.checkStatus() });\n  login(email: string, password: string) {\n    return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, { email, password }).pipe(\n      map((resp) => this.handleAuthSuccess(resp)),\n      catchError((error) => this.handleAuthError(error)),\n    );\n  }\n\n  checkStatus() {\n    const token = localStorage.getItem('token');\n    if (!token) {\n      this.logout();\n      return of(false);\n    }\n    return this.http\n      .get<AuthResponse>(`${baseUrl}/auth/check-status`)\n      .pipe(\n        map((resp) => this.handleAuthSuccess(resp)),\n        catchError((error) => this.handleAuthError(error)),\n      );\n  }\n  logout() {\n    this._authStatus.set('not-authenticated');\n    this._user.set(null);\n    this._token.set(null);\n    // Temporal en 278; 279 no muestra su restauración.\n    // localStorage.removeItem('token');\n  }\n\n  private handleAuthSuccess({ user, token }: AuthResponse) {\n    this._authStatus.set('authenticated');\n    this._user.set(user);\n    this._token.set(token);\n    localStorage.setItem('token', token);\n    return true;\n  }\n\n  private handleAuthError(error: any) {\n    this.logout();\n    return of(false);\n  }\n}\n",
+      "provenance": "E5; clase heredada de 276–278. removeItem sigue comentado porque la transcripción no muestra su restauración."
+    },
+    {
+      "path": "src/app/app.config.ts",
+      "language": "typescript",
+      "code": "import { ApplicationConfig } from '@angular/core';\nimport { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';\nimport { loggingInterceptor } from './shared/interceptors/logging.interceptor';\nimport { authInterceptor } from './auth/interceptors/auth.interceptor';\n\n// Composición HTTP recuperada. Los demás providers previos no se conocen aquí.\nexport const appConfig: ApplicationConfig = {\n  providers: [\n    provideHttpClient(\n      withFetch(),\n      withInterceptors([\n        // loggingInterceptor,\n        authInterceptor,\n      ]),\n    ),\n  ],\n};\n",
+      "provenance": "E6–E7; solo composición HTTP recuperable. Otros providers del proyecto heredado no se inventan."
+    }
+  ],
+  "temporary": "El console.log(token) se menciona como posibilidad y no queda en el final. El logger queda comentado. El filtro por req.url se explica como alternativa, pero el instructor elige no aplicarlo. No añadir guard ni renovación; la próxima clase trata guards. El experimento de removeItem aún no aparece revertido en este original.",
+  "mental": "Servicio lee token al inicio → interceptor clona request y añade Bearer → backend del ejemplo valida. La política de destino/token nulo requiere una adaptación explícita; no está resuelta aquí."
+}

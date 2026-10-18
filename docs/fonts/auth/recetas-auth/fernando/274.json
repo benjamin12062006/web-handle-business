@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 20 Autenticación y autorización/274. Manejo de excepciones.md",
+  "previous": [
+    "Sección 20 Autenticación y autorización/272. AuthService - Controlar autenticación.md",
+    "Sección 20 Autenticación y autorización/273. AuthService - Parte 2.md",
+    "Sección 20 Autenticación y autorización/271. Formulario reactivo de autenticación.md"
+  ],
+  "objective": "Convertir el resultado del login en booleano y mostrar o navegar según éxito/error.",
+  "initial": "Servicio y componente al final de 273, formulario de 271. La petición ya produce AuthResponse y guarda el éxito.",
+  "certainty": "Reconstrucción ensamblada desde la explicación, no una copia del repositorio del instructor. Se conserva el estado de esta lección, incluidos sus pasos aún incompletos. No hay ZIP inicial ni definición completa del User heredado: su import requiere el adjunto; no se inventa esa interfaz. Los imports relativos y envolturas de componentes/configuración son una composición mínima inferida, identificada como tal, no el árbol original completo. Los mecanismos documentados sí tienen evidencia por símbolo. Se corrige únicamente el lapsus verbal de asignar null a una señal: se usa .set(null). No se introduce limpieza del localStorage; esa centralización llega en 276.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 13,
+      "phrase": "Observable",
+      "change": "Resultado booleano con map.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 15,
+      "phrase": "catchError",
+      "change": "Capturar error.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 17,
+      "phrase": "of",
+      "change": "Limpiar señales y devolver of(false).",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 21,
+      "phrase": "isAuthenticated",
+      "change": "Suscripción booleana.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 23,
+      "phrase": "navigateByUrl",
+      "change": "Navegación al home o señal hasError.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 25,
+      "phrase": "dos segundos",
+      "change": "Alerta temporal.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E7",
+      "line": 27,
+      "phrase": "replaceUrl",
+      "change": "Alternativa explicada, no adoptada.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    }
+  ],
+  "phases": [
+    {
+      "title": "Mantener tap y transformar el resultado",
+      "code": "map(() => true),\ncatchError((error: any) => {\n  this._user.set(null);\n  this._token.set(null);\n  this._authStatus.set('not-authenticated');\n  return of(false);\n})\n",
+      "why": "map devuelve un valor; catchError debe devolver otro Observable. El componente recibe false como un valor, no por su callback error.",
+      "check": "Respuesta exitosa → true; petición rechazada → false y señales vacías. No afirmar que cualquier código distinto de 200 es error: el propio ejemplo admite 2xx.",
+      "evidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Consumir el booleano en la pantalla",
+      "code": "this.authService.login(email ?? '', password ?? '').subscribe((isAuthenticated) => {\n  if (isAuthenticated) {\n    this.router.navigateByUrl('/');\n  } else {\n    this.hasError.set(true);\n    setTimeout(() => this.hasError.set(false), 2500);\n  }\n});\n",
+      "why": "La UI decide navegación o aviso, mientras el servicio decide el resultado del proceso.",
+      "check": "Revisar que el callback ya no espera AuthResponse. En el curso credenciales incorrectas muestran el aviso; correctas llevan al home.",
+      "evidence": [
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "language": "typescript"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/app/auth/services/auth.service.ts",
+      "language": "typescript",
+      "code": "import { computed, inject, Injectable, signal } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { User } from '../interfaces/auth.interfaces';\nimport { AuthResponse } from '../interfaces/auth-response.interface';\nimport { environment } from '../../../environments/environment';\nimport { tap, map, catchError, of } from 'rxjs';\n\nconst baseUrl = environment.baseUrl;\n\nexport type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';\n\n@Injectable({ providedIn: 'root' })\nexport class AuthService {\n  private http = inject(HttpClient);\n  private _authStatus = signal<AuthStatus>('checking');\n  private _user = signal<User | null>(null);\n  private _token = signal<string | null>(null);\n\n  authStatus = computed<AuthStatus>(() => {\n    if (this._authStatus() === 'checking') return 'checking';\n    return this._user() ? 'authenticated' : 'not-authenticated';\n  });\n  user = computed(() => this._user());\n  token = computed(() => this._token());\n  login(email: string, password: string) {\n    return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, { email, password }).pipe(\n      tap((resp) => {\n        this._authStatus.set('authenticated');\n        this._user.set(resp.user);\n        this._token.set(resp.token);\n        localStorage.setItem('token', resp.token);\n      }),\n      map(() => true),\n      catchError((error: any) => {\n        this._authStatus.set('not-authenticated');\n        this._user.set(null);\n        this._token.set(null);\n        return of(false);\n      }),\n    );\n  }\n}\n",
+      "provenance": "E1–E3; petición y tap de 273; estado de 272. Archivo completo del núcleo del servicio, User/environment heredados."
+    },
+    {
+      "path": "src/app/auth/pages/login-page/login-page.component.ts",
+      "language": "typescript",
+      "code": "import { Component, inject, signal } from '@angular/core';\nimport { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';\nimport { AuthService } from '../../services/auth.service';\nimport { Router } from '@angular/router';\n\n@Component({\n  selector: 'app-login-page',\n  imports: [ReactiveFormsModule],\n  templateUrl: './login-page.component.html',\n})\nexport class LoginPageComponent {\n  private fb = inject(FormBuilder);\n  private router = inject(Router);\n  authService = inject(AuthService);\n  hasError = signal(false);\n  isPosting = signal(false);\n  loginForm = this.fb.group({\n    email: ['', [Validators.required, Validators.email]],\n    password: ['', [Validators.required, Validators.minLength(6)]],\n  });\n\n  onSubmit() {\n    if (this.loginForm.invalid) {\n      this.hasError.set(true);\n      setTimeout(() => this.hasError.set(false), 2000);\n      return;\n    }\n    const { email, password } = this.loginForm.value;\n    this.authService.login(email ?? '', password ?? '').subscribe((isAuthenticated) => {\n      if (isAuthenticated) {\n        this.router.navigateByUrl('/');\n      } else {\n        this.hasError.set(true);\n        setTimeout(() => this.hasError.set(false), 2500);\n      }\n    });\n  }\n}\n",
+      "provenance": "E4–E6 y formulario 271. Plantilla previa usa @if(hasError()); no se reconstruyen SVG/estilos ausentes."
+    }
+  ],
+  "temporary": "replaceUrl se menciona como alternativa y no se aplica. No agregar guards, registro o logout que la lección todavía pospone. El token persistido no se elimina aquí; no anticipar la refactorización de 276.",
+  "mental": "tap conserva el efecto; map transforma AuthResponse en true; catchError reemplaza el fallo por of(false); la UI interpreta ese resultado."
+}

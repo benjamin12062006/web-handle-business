@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/244. Configurar Solicitudes HTTP en Angular.md",
+  "previous": [
+    "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/241. Introducción al Cliente HTTP de Angular (HttpClient).md",
+    "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/243. Enviar Solicitudes GET en Angular.md"
+  ],
+  "objective": "Explorar respuesta completa y eventos y devolver el código final al GET del body.",
+  "initial": "Final de 243: GET tipado, subscribe y desuscripción mediante DestroyRef. Datos respuesta contienen lugares. El backend corre en puerto 3000; 4200 era el frontend y fue corregido en 243.",
+  "certainty": "Reconstrucción ensamblada, con nombres españoles normalizados desde el dictado. El ZIP inicial de 238 no está en la biblioteca: modelos, componentes de presentación, CSS y main previos no se recuperan íntegros. Se muestra completo el núcleo HTTP y las envolturas mínimas necesarias para leerlo; no se afirma que equivalgan a la aplicación completa del instructor ni que compilen sin sus dependencias heredadas. No se inventa la definición de Lugar ni el componente app-lugares. El original comenta response.body.lugares aunque 243 terminaba registrando datos; no se inventa una asignación permanente a la señal antes de 245. Los accesos al body se conservan como parte del experimento; el final vuelve al GET simple.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 13,
+      "phrase": "segundo argumento",
+      "change": "Objeto de opciones.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 15,
+      "phrase": "objeto completo",
+      "change": "observe response y body.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 17,
+      "phrase": "null",
+      "change": "Body nullable.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 21,
+      "phrase": "código de estado",
+      "change": "Status/headers y alternativa events.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 23,
+      "phrase": "distintos eventos",
+      "change": "Eventos múltiples y sin body genérico.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 25,
+      "phrase": "deshacer",
+      "change": "Revertir el experimento.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E7",
+      "line": 27,
+      "phrase": "solamente los datos",
+      "change": "Estado final sin observe.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E8",
+      "line": 29,
+      "phrase": "destroy ref",
+      "change": "Ciclo de vida heredado.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada.",
+      "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/243. Enviar Solicitudes GET en Angular.md"
+    },
+    {
+      "id": "E9",
+      "line": 43,
+      "phrase": "3000",
+      "change": "Puerto corregido heredado.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada.",
+      "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/243. Enviar Solicitudes GET en Angular.md"
+    },
+    {
+      "id": "E10",
+      "line": 39,
+      "phrase": "array",
+      "change": "Tipo Lugar[] heredado.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada.",
+      "source": "Sección 18 DÍA 18 - INTRODUCCIÓN AL HTTPCLIENT/243. Enviar Solicitudes GET en Angular.md"
+    }
+  ],
+  "phases": [
+    {
+      "title": "Recibir la respuesta completa",
+      "code": "this.httpClient.get<{ lugares: Lugar[] }>('http://localhost:3000/lugares', {\n  observe: 'response',\n}).subscribe({\n  next: (response) => {\n    console.log(response);\n    console.log(response.body?.lugares);\n  },\n});\n",
+      "why": "observe response cambia el tipo emitido: ahora contiene status, headers y body. El body podría ser null.",
+      "check": "Inspeccionar status/headers y acceder a response.body?.lugares. Este bloque reemplaza temporalmente el GET, no añade una segunda petición.",
+      "evidence": [
+        "E1",
+        "E2",
+        "E3",
+        "E4"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Explorar eventos de la petición",
+      "code": "this.httpClient.get<{ lugares: Lugar[] }>('http://localhost:3000/lugares', {\n  observe: 'events',\n}).subscribe({ next: (evento) => console.log(evento) });\n",
+      "why": "Sent y Response son emisiones distintas. No todos los eventos tienen body.",
+      "check": "El curso observa el envío y después la respuesta; no interpretar dos eventos como dos cuentas o dos peticiones.",
+      "evidence": [
+        "E4",
+        "E5"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Restaurar la forma anterior",
+      "code": "// Reemplazar el experimento por el GET simple:\nthis.httpClient.get<{ lugares: Lugar[] }>('http://localhost:3000/lugares').subscribe({\n  next: (datosRespuesta) => console.log(datosRespuesta),\n});\n",
+      "why": "La clase es una exploración de opciones; no deja observe habilitado en su último estado.",
+      "check": "El callback vuelve a recibir directamente el body. Recuperar la desuscripción heredada del archivo final.",
+      "evidence": [
+        "E6",
+        "E7",
+        "E8",
+        "E9",
+        "E10"
+      ],
+      "language": "typescript"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/app/lugares/lugares-disponibles/lugares-disponibles.component.ts",
+      "language": "typescript",
+      "code": "import { Component, DestroyRef, inject, OnInit } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { Lugar } from '../lugar.model';\n\n@Component({\n  selector: 'app-lugares-disponibles',\n  templateUrl: './lugares-disponibles.component.html',\n})\nexport class LugaresDisponiblesComponent implements OnInit {\n  private httpClient = inject(HttpClient);\n  private destroyRef = inject(DestroyRef);\n\n  ngOnInit() {\n    const suscripcion = this.httpClient\n      .get<{ lugares: Lugar[] }>('http://localhost:3000/lugares')\n      .subscribe({\n        next: (datosRespuesta) => console.log(datosRespuesta),\n      });\n    this.destroyRef.onDestroy(() => suscripcion.unsubscribe());\n  }\n}\n",
+      "provenance": "E6–E10: estado de 243 restaurado, sin observe. Nombres/rutas normalizados; Lugar y vista son dependencias del ZIP no reconstruidas."
+    }
+  ],
+  "temporary": "observe: response y observe: events son experimentos retirados. Guardar ambos en fases permite estudiar su mecanismo sin falsificar el último estado. El endpoint /lugares y nombres españoles están normalizados desde la transcripción; no se certifica el código exacto del ZIP.",
+  "mental": "observe cambia la emisión, no el backend: body → respuesta completa → eventos. El último archivo vuelve al body; la adaptación a auth sí podrá elegir observar el status."
+}

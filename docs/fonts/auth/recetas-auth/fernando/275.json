@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "review_status": "ready",
+  "source": "Sección 20 Autenticación y autorización/275. Revisar autenticación previa.md",
+  "previous": [
+    "Sección 20 Autenticación y autorización/272. AuthService - Controlar autenticación.md",
+    "Sección 20 Autenticación y autorización/273. AuthService - Parte 2.md",
+    "Sección 20 Autenticación y autorización/274. Manejo de excepciones.md"
+  ],
+  "objective": "Restaurar el login con el token persistido y un recurso que llama a checkStatus al crear el servicio.",
+  "initial": "Al final de 274 se guarda token pero se pierde el estado al recargar. La petición de comprobación ofrece AuthResponse igual que login.",
+  "certainty": "Reconstrucción ensamblada desde la explicación, no una copia del repositorio del instructor. Se conserva el estado de esta lección, incluidos sus pasos aún incompletos. No hay ZIP inicial ni definición completa del User heredado: su import requiere el adjunto; no se inventa esa interfaz. Los imports relativos y envolturas de componentes/configuración son una composición mínima inferida, identificada como tal, no el árbol original completo. Los mecanismos documentados sí tienen evidencia por símbolo. Se mantiene la firma histórica rxResource({loader}) del discurso: no se moderniza dentro de la guía. La rama sin token devuelve false y conserva checking; el instructor identifica ese defecto al terminar. No es un estado final corregido.",
+  "evidence": [
+    {
+      "id": "E1",
+      "line": 15,
+      "phrase": "check-status",
+      "change": "GET protegido de comprobación.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E2",
+      "line": 19,
+      "phrase": "localStorage.getItem",
+      "change": "Leer token y retorno temprano false.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E3",
+      "line": 23,
+      "phrase": "Authorization",
+      "change": "Bearer en headers.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E4",
+      "line": 27,
+      "phrase": "AuthResponse",
+      "change": "Respuesta y actualización repetida.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E5",
+      "line": 31,
+      "phrase": "rxResource",
+      "change": "Recurso de arranque.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E6",
+      "line": 33,
+      "phrase": "loader",
+      "change": "Loader llama checkStatus.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    },
+    {
+      "id": "E7",
+      "line": 35,
+      "phrase": "checking",
+      "change": "Defecto en rama sin token.",
+      "certainty": "Explícito en el discurso; sintaxis ensamblada y revisada."
+    }
+  ],
+  "phases": [
+    {
+      "title": "Distinguir ausencia de token de comprobación remota",
+      "code": "const token = localStorage.getItem('token');\nif (!token) return of(false);\n",
+      "why": "No se envía una petición si no hay credencial. En este paso el retorno no limpia las señales.",
+      "check": "Vaciar token → false sin petición, pero la señal puede quedar checking: es el defecto reconocido de esta lección.",
+      "evidence": [
+        "E2",
+        "E7"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Consultar check-status con Bearer",
+      "code": "checkStatus() {\n  const token = localStorage.getItem('token');\n  if (!token) return of(false);\n  return this.http.get<AuthResponse>(`${baseUrl}/auth/check-status`, {\n    headers: { Authorization: `Bearer ${token}` },\n  }).pipe(\n    tap((resp) => {\n      this._authStatus.set('authenticated');\n      this._user.set(resp.user);\n      this._token.set(resp.token);\n      localStorage.setItem('token', resp.token);\n    }),\n    map(() => true),\n    catchError((error: any) => {\n      this._authStatus.set('not-authenticated');\n      this._user.set(null);\n      this._token.set(null);\n      return of(false);\n    }),\n  );\n}\n",
+      "why": "La identidad no se obtiene de un booleano guardado: el ejemplo pide al servidor validar el JWT y devuelve nuevo usuario/token.",
+      "check": "Con token vigente el GET tiene Authorization y actualiza señales; con token rechazado pasa por catchError.",
+      "evidence": [
+        "E1",
+        "E3",
+        "E4"
+      ],
+      "language": "typescript"
+    },
+    {
+      "title": "Disparar la comprobación al inicializar el servicio",
+      "code": "checkStatusResource = rxResource({ loader: () => this.checkStatus() });\n",
+      "why": "Definir checkStatus no lo ejecuta; el recurso llama su loader cuando el servicio se usa.",
+      "check": "Revisar el import desde @angular/core/rxjs-interop y observar en el curso una consulta al recargar. No cambiar loader por una API más nueva aquí.",
+      "evidence": [
+        "E5",
+        "E6"
+      ],
+      "language": "typescript"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/app/auth/services/auth.service.ts",
+      "language": "typescript",
+      "code": "import { computed, inject, Injectable, signal } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { User } from '../interfaces/auth.interfaces';\nimport { AuthResponse } from '../interfaces/auth-response.interface';\nimport { environment } from '../../../environments/environment';\nimport { tap, map, catchError, of } from 'rxjs';\n\nconst baseUrl = environment.baseUrl;\n\nimport { rxResource } from '@angular/core/rxjs-interop';\nexport type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';\n\n@Injectable({ providedIn: 'root' })\nexport class AuthService {\n  private http = inject(HttpClient);\n  private _authStatus = signal<AuthStatus>('checking');\n  private _user = signal<User | null>(null);\n  private _token = signal<string | null>(null);\n\n  authStatus = computed<AuthStatus>(() => {\n    if (this._authStatus() === 'checking') return 'checking';\n    return this._user() ? 'authenticated' : 'not-authenticated';\n  });\n  user = computed(() => this._user());\n  token = computed(() => this._token());\n  checkStatusResource = rxResource({ loader: () => this.checkStatus() });\n  login(email: string, password: string) {\n    return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, { email, password }).pipe(\n      tap((resp) => {\n        this._authStatus.set('authenticated');\n        this._user.set(resp.user);\n        this._token.set(resp.token);\n        localStorage.setItem('token', resp.token);\n      }),\n      map(() => true),\n      catchError((error: any) => {\n        this._authStatus.set('not-authenticated');\n        this._user.set(null);\n        this._token.set(null);\n        return of(false);\n      }),\n    );\n  }\n  checkStatus() {\n    const token = localStorage.getItem('token');\n    if (!token) return of(false);\n    return this.http\n      .get<AuthResponse>(`${baseUrl}/auth/check-status`, {\n        headers: { Authorization: `Bearer ${token}` },\n      })\n      .pipe(\n        tap((resp) => {\n          this._authStatus.set('authenticated');\n          this._user.set(resp.user);\n          this._token.set(resp.token);\n          localStorage.setItem('token', resp.token);\n        }),\n        map(() => true),\n        catchError((error: any) => {\n          this._authStatus.set('not-authenticated');\n          this._user.set(null);\n          this._token.set(null);\n          return of(false);\n        }),\n      );\n  }\n}\n",
+      "provenance": "E1–E7; login heredado de 274, señales de 272 e interfaz de 273. rxResource usa la firma histórica expresamente narrada."
+    }
+  ],
+  "temporary": "No anticipar logout ni extraer helpers: esa refactorización es 276. La rama sin token deliberadamente conserva el defecto checking, explicado al terminar. La transcripción no equivale a una especificación vigente de rxResource.",
+  "mental": "Token persistido → GET autenticado → señales. El recurso inicia la operación; el retorno temprano todavía necesita una transición explícita."
+}
